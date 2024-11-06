@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "start": "NODE_ENV=production vite --host",
+    "dev": "vite --mode development",
+    "start": "vite --host --mode production",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
