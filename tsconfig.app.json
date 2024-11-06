@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Paths */
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@api/*": ["./src/api/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@components/*": ["./src/components/*"],
+      "@views/*": ["./src/views/*"],
+      "@query/*": ["./src/model/query.not.use/*"],
+      "@view-model/*": ["./src/view-model/*"],
+      "@view/*": ["./src/view/*"]
+    }
+  },
+  "include": ["src"]
+}
