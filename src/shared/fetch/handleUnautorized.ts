@@ -3,6 +3,8 @@ import { clearStorage } from "../reset/clearStorage";
 import axios, { AxiosResponse } from "axios";
 import { pushToast } from "../toast/toast";
 import { userManagementApi } from "@src/api/user-management/index.api";
+import { publicRoutes } from "@src/route/route.whitelist";
+import { getPathname } from "../helper/getPathname";
 
 export const handleUnauthorized = async (response: AxiosResponse) => {
   const { code } = response.data;
@@ -34,9 +36,11 @@ const resendRequest = async (response: AxiosResponse) => {
 };
 
 const forceLogout = (message: string) => {
-  pushToast({
-    type: "error",
-    message,
-  });
+  if (!publicRoutes.includes(getPathname())) {
+    pushToast({
+      type: "error",
+      message,
+    });
+  }
   clearStorage();
 };

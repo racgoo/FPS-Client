@@ -27,18 +27,23 @@ const useAuth = () => {
 
   const reissue = async () => {
     const { status } = await userManagementApi.reissue.get();
-    if (status !== 200) {
-      navigate(RoutePath.LOGIN, { replace: true });
-      return false;
-    }
-    return true;
+    return status === 200;
   };
 
   const initialLogin = async () => {
-    if (!publicRoutes.includes(getPathname())) {
-      const success = await reissue();
-      if (success) {
+    const success = await reissue();
+    if (success) {
+      //로그인 성공
+      console.log(getPathname() === RoutePath.LOGIN);
+      if (getPathname() === RoutePath.LOGIN) {
+        //로그인 페이지 접근시 Home으로 전환
         navigate(RoutePath.HOME, { replace: true });
+      }
+    } else {
+      //로그인 실패
+      if (!publicRoutes.includes(getPathname())) {
+        //권한이 필요한 페이지 접근시 로그인 페이지로 전환
+        navigate(RoutePath.LOGIN, { replace: true });
       }
     }
     setInitialLoading(false);
