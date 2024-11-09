@@ -1,8 +1,8 @@
 import axios from "axios";
-import { handleReissue } from "./handleReissue";
 import { handleForbidden } from "./handleForbidden";
 import { baseUrl, FetchMethod } from "./constants";
 import { handleErrors } from "./handleErrors";
+import { handleUnauthorized } from "./handleUnautorized";
 
 //CUSTOM FETCH FUNCTION
 export const fetchData = async <T>({
@@ -40,13 +40,14 @@ declare module "axios" {
 
 //REISSUE INTERCEPTOR ( GET NEW ACCESS,REFRESH TOKEN USING REFRESH TOKEN )
 axios.interceptors.response.use(async (response) => {
-  const { status } = response.data;
+  const { status, message } = response.data;
   //ERROR HANDLING
   switch (status) {
     case 401:
-      await handleReissue(response);
+      await handleUnauthorized(response);
       break;
     case 403:
+      alert(message);
       handleForbidden();
       break;
     default: {

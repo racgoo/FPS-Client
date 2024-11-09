@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
 import { userManagementApi } from "@src/api/user-management/index.api";
 import { pushToast } from "@src/shared/toast/toast";
+import { useTypedNavigate } from "@src/route/useTypedNavigate";
+import { RoutePath } from "@src/route/route.type";
 
 const useRegister = () => {
-  const navigate = useNavigate();
+  const navigate = useTypedNavigate();
   const [emailDuplication, setEmailDuplication] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +28,7 @@ const useRegister = () => {
     setLoading(true);
     const { status, message } = await userManagementApi.signup.post(values);
     if (status === 200) {
-      navigate("/", { replace: true });
+      navigate(RoutePath.LOGIN, { replace: true });
       pushToast({
         type: "success",
         message: `${values.name}님,\n회원가입이 완료되었습니다.`,

@@ -11,11 +11,12 @@ import GradientButton, {
   GradientColor,
 } from "../components/button/GradientButton";
 import useAuth from "../view-model/auth/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useTypedNavigate } from "@src/route/useTypedNavigate";
+import { RoutePath } from "@src/route/route.type";
 
 function Login() {
   const styles = useStyle();
-  const navigate = useNavigate();
+  const navigate = useTypedNavigate();
   const { login, loading } = useAuth();
 
   const handleLogin = async (values: { email: string; password: string }) => {
@@ -23,7 +24,7 @@ function Login() {
   };
 
   const handleRegister = () => {
-    navigate("/register", { replace: true });
+    navigate(RoutePath.REGISTER, { replace: true });
   };
 
   return (
@@ -111,7 +112,7 @@ function useStyle() {
       backgroundOrigin: "border-box",
       backgroundSize: "cover",
       alignItems: "center",
-      width: "100vw",
+      width: "100%",
       height: "100vh",
       gap: "10px",
     }),

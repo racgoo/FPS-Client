@@ -1,17 +1,22 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { userManagementApi } from "@api/user-management/index.api";
 import { pushToast } from "@src/shared/toast/toast";
+import { publicRoutes } from "@src/route/route.whitelist";
+import { getPathname } from "@src/shared/helper/getPathname";
+import { useTypedNavigate } from "@src/route/useTypedNavigate";
+import { RoutePath } from "@src/route/route.type";
 
 const useAuth = () => {
-  const navigate = useNavigate();
+  const navigate = useTypedNavigate();
   const [loginLoading, setLoginLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+
   const login = async (payload: { email: string; password: string }) => {
     setLoginLoading(true);
     const { status } = await userManagementApi.signin.post(payload);
     if (status === 200) {
-      navigate("/home", { replace: true });
+      navigate(RoutePath.HOME, { replace: true });
       pushToast({
         type: "success",
         message: "로그인 되었습니다.",
@@ -21,17 +26,27 @@ const useAuth = () => {
   };
 
   const reissue = async () => {
-    const { status, message } = await userManagementApi.reissue.get();
+    const { status } = await userManagementApi.reissue.get();
     if (status !== 200) {
-      pushToast({
-        type: "error",
-        message,
-      });
-      navigate("/", { replace: true });
+      navigate(RoutePath.LOGIN, { replace: true });
     }
   };
 
-  return { login, reissue, loading: loginLoading };
+  const initailLogin = async () => {
+    if (!publicRoutes.includes(getPathname())) {
+      await reissue();
+    }
+    console.log("hi");
+    setInitialLoading(false);
+  };
+
+  return {
+    login,
+    reissue,
+    loading: loginLoading,
+    initialLoading,
+    initailLogin,
+  };
 };
 
 export default useAuth;

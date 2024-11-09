@@ -6,14 +6,15 @@ import {
 } from "@ant-design/icons";
 import { css } from "@emotion/react";
 import { Button, Form, Input, Typography } from "antd";
-import GradientButton from "../components/button/GradientButton";
+import GradientButton from "@src/components/button/GradientButton";
 import { useCallback } from "react";
-import useRegister from "../view-model/auth/useRegister";
-import { useNavigate } from "react-router-dom";
+import useRegister from "@src/view-model/auth/useRegister";
+import { useTypedNavigate } from "@src/route/useTypedNavigate";
+import { RoutePath } from "@src/route/route.type";
 
 const Register = () => {
   const styles = useStyle();
-  const navigate = useNavigate();
+  const navigate = useTypedNavigate();
   const { getEmailDuplication, loading, register } = useRegister();
   const [form] = Form.useForm();
 
@@ -49,7 +50,7 @@ const Register = () => {
   );
 
   const goToLogin = () => {
-    navigate("/", { replace: true });
+    navigate(RoutePath.LOGIN, { replace: true });
   };
 
   return (
@@ -178,9 +179,10 @@ const Register = () => {
 function useStyle() {
   return {
     container: css({
-      width: "100vw",
+      width: "100%",
       height: "100vh",
       display: "flex",
+      backgroundColor: "red",
       justifyContent: "center",
       flexDirection: "column",
       alignItems: "center",

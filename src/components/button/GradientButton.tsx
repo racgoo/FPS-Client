@@ -1,5 +1,4 @@
 import React from "react";
-import { LoginOutlined } from "@ant-design/icons";
 import { Button, ConfigProvider } from "antd";
 import { createStyles } from "antd-style";
 

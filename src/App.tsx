@@ -6,46 +6,41 @@ import NotFound from "./view/NotFound";
 import Login from "./view/Login";
 import { ConfigProvider } from "antd";
 import { antdTheme } from "./style/antd/theme";
-import Home from "./view/Home";
 import AlertProvider from "./components/provider/AlertProvider";
 import Register from "./view/Register";
 import CookieProvider from "./components/provider/CookieProvider";
+import { RoutePath } from "./route/route.type";
+import Home from "./view/Home";
+import AuthProvider from "./components/provider/AuthProvider";
 
 function App() {
   const styles = useStyle();
-
-  // useEffect(() => {
-  //   socket.connect();
-  //   axios
-  //     .post("http://localhost:4000/user-management/signin", {
-  //       email: "lhsung987@naver.com",
-  //       password: "racgoo98",
-  //     })
-  //     .then((res) => {
-  //       setAuth(res.headers.authorization);
-  //     });
-  //   socket.on("disconnect", () => {
-  //     console.log("disconnect");
-  //   });
-  // }, []);
 
   return (
     <CookieProvider>
       <ConfigProvider theme={antdTheme}>
         <AlertProvider>
-          <div css={styles.container}>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Login />}></Route>
-                <Route path="/register" element={<Register />}></Route>
-                <Route path="/home" element={<Home />}></Route>
-                <Route path="*" element={<NotFound />}></Route>
-              </Routes>
-            </BrowserRouter>
-          </div>
+          <BrowserRouter>
+            <AuthProvider>
+              <div css={styles.container}>
+                <AppContent />
+              </div>
+            </AuthProvider>
+          </BrowserRouter>
         </AlertProvider>
       </ConfigProvider>
     </CookieProvider>
+  );
+}
+
+function AppContent() {
+  return (
+    <Routes>
+      <Route path={RoutePath.LOGIN} element={<Login />}></Route>
+      <Route path={RoutePath.REGISTER} element={<Register />}></Route>
+      <Route path={RoutePath.HOME} element={<Home />}></Route>
+      <Route path="*" element={<NotFound />}></Route>
+    </Routes>
   );
 }
 
