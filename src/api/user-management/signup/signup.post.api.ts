@@ -5,6 +5,7 @@ type SignupPostApiPayload = {
   email: string;
   password: string;
   name: string;
+  verificationToken: string;
 };
 
 type SignupPostApiResult = null;

@@ -34,7 +34,6 @@ const useAuth = () => {
     const success = await reissue();
     if (success) {
       //로그인 성공
-      console.log(getPathname() === RoutePath.LOGIN);
       if (getPathname() === RoutePath.LOGIN) {
         //로그인 페이지 접근시 Home으로 전환
         navigate(RoutePath.HOME, { replace: true });

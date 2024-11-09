@@ -7,16 +7,32 @@ import {
 import { css } from "@emotion/react";
 import { Button, Form, Input, Typography } from "antd";
 import GradientButton from "@src/components/button/GradientButton";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import useRegister from "@src/view-model/auth/useRegister";
 import { useTypedNavigate } from "@src/route/useTypedNavigate";
 import { RoutePath } from "@src/route/route.type";
+import { pushToast } from "@src/shared/toast/toast";
 
 const Register = () => {
   const styles = useStyle();
   const navigate = useTypedNavigate();
-  const { getEmailDuplication, loading, register } = useRegister();
+  const [emailValidButtonVisible, setEmailValidButtonVisible] = useState(false);
+  const {
+    getEmailDuplication,
+    loading,
+    register,
+    sendEmailAuthentication,
+    emailAuthExpireTimeMils,
+    emailAuthLoading,
+    verificationToken,
+    sendEmailVerification,
+  } = useRegister();
+
   const [form] = Form.useForm();
+  const verificationFinish = !!verificationToken;
+  const emailInputDisabled =
+    emailAuthExpireTimeMils > 0 || emailAuthLoading || verificationFinish;
+  const otpInputVisible = emailAuthExpireTimeMils > 0 && !verificationFinish;
 
   const handleRegister = (values: {
     email: string;
@@ -24,7 +40,22 @@ const Register = () => {
     password: string;
     passwordCheck: string;
   }) => {
-    register(values);
+    if (!verificationToken) {
+      return pushToast({
+        type: "error",
+        message: "이메일 인증이 필요합니다.",
+      });
+    }
+    register({ ...values, verificationToken });
+  };
+
+  const handleEmailValidButtonVisible = async () => {
+    try {
+      await form.validateFields(["email"]);
+      setEmailValidButtonVisible(true);
+    } catch {
+      setEmailValidButtonVisible(false);
+    }
   };
 
   const validateEmailDuplication = useCallback(
@@ -32,8 +63,9 @@ const Register = () => {
       const duplicated = await getEmailDuplication(value);
       if (duplicated) {
         return Promise.reject(new Error("이미 존재하는 이메일입니다."));
+      } else {
+        return Promise.resolve();
       }
-      return Promise.resolve();
     },
     [getEmailDuplication]
   );
@@ -48,6 +80,17 @@ const Register = () => {
     },
     [form]
   );
+
+  const handleEmailValidButtonClick = async () => {
+    await sendEmailAuthentication(form.getFieldValue("email"));
+  };
+
+  const handleEmailVerificationButtonC = async () => {
+    await sendEmailVerification(
+      form.getFieldValue("email"),
+      form.getFieldValue("verificationCode")
+    );
+  };
 
   const goToLogin = () => {
     navigate(RoutePath.LOGIN, { replace: true });
@@ -88,8 +131,50 @@ const Register = () => {
               size="large"
               placeholder="이메일"
               prefix={<MailOutlined />}
+              onChange={handleEmailValidButtonVisible}
+              disabled={emailInputDisabled}
             />
           </Form.Item>
+          {emailValidButtonVisible && !verificationFinish && (
+            <Button
+              css={styles.animationBox}
+              onClick={handleEmailValidButtonClick}
+              disabled={emailInputDisabled}
+            >
+              이메일 인증
+            </Button>
+          )}
+
+          {otpInputVisible && (
+            <Form.Item
+              name="verificationCode"
+              css={styles.animationBox}
+              // style={{ width: "100%", marginBottom: 0 }}
+            >
+              <Input
+                size="large"
+                placeholder="인증 코드"
+                prefix={<KeyOutlined />}
+                suffix={
+                  <div css={styles.codeSuffixBox}>
+                    <div css={styles.codeVerifyBox}>
+                      <Typography.Text>
+                        {emailAuthExpireTimeMils / 1000}초
+                      </Typography.Text>
+                    </div>
+                    <Button
+                      css={styles.codeVerifyBox}
+                      size="small"
+                      onClick={handleEmailVerificationButtonC}
+                    >
+                      인증하기
+                    </Button>
+                  </div>
+                }
+              />
+            </Form.Item>
+          )}
+
           <Form.Item
             name="name"
             style={{ width: "100%", marginBottom: 0 }}
@@ -150,7 +235,6 @@ const Register = () => {
           </Form.Item>
           <Form.Item
             style={{ width: "100%", marginBottom: 0 }}
-            shouldUpdate
             dependencies={["email", "password", "passwordCheck", "name"]}
           >
             {({ getFieldsError, getFieldsValue }) => {
@@ -159,13 +243,13 @@ const Register = () => {
               );
               const values = getFieldsValue();
               const isEmpty = !values.email || !values.password || !values.name;
-              const isValid = hasError || isEmpty;
+              const isInValid = hasError || isEmpty || !verificationFinish;
               return (
                 <GradientButton
                   loading={loading}
                   text="회원가입"
                   htmlType="submit"
-                  disabled={isValid}
+                  disabled={isInValid}
                 />
               );
             }}
@@ -192,6 +276,38 @@ function useStyle() {
       flexDirection: "column",
       gap: "4px",
       padding: "10px",
+    }),
+    animationBox: css({
+      width: "100%",
+      height: "100%",
+      animation: "slideDown 0.5s ease-in-out",
+      "@keyframes slideDown": {
+        from: {
+          transform: "translateY(-100%)",
+          opacity: 0,
+        },
+        to: {
+          transform: "translateY(0)",
+          opacity: 1,
+        },
+      },
+    }),
+    codeSuffixBox: css({
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+    }),
+    codeVerifyBox: css({
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      border: "1px solid #d9d9d9",
+    }),
+    expireTimeBox: css({
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      border: "1px solid #d9d9d9",
     }),
   };
 }
