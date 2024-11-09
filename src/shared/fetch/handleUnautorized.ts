@@ -6,13 +6,22 @@ import { userManagementApi } from "@src/api/user-management/index.api";
 
 export const handleUnauthorized = async (response: AxiosResponse) => {
   const { code } = response.data;
-  if (code === sharedErrorCode.EXPIRED_ACCESS_TOKEN) {
-    const { status: reissueStatus } = await reissueToken();
-    if (reissueStatus === 200) {
-      return await resendRequest(response);
+  switch (code) {
+    case sharedErrorCode.EXPIRED_ACCESS_TOKEN: {
+      const { status: reissueStatus } = await reissueToken();
+      if (reissueStatus === 200) {
+        return await resendRequest(response);
+      }
+      break;
+    }
+    case sharedErrorCode.EXPIRED_REFRESH_TOKEN: {
+      forceLogout("로그인 정보가 만료되었습니다.\n다시 로그인 해주세요.");
+      break;
+    }
+    default: {
+      forceLogout("접근 권한이 없습니다.");
     }
   }
-  forceLogout();
 };
 
 const reissueToken = async () => {
@@ -24,10 +33,10 @@ const resendRequest = async (response: AxiosResponse) => {
   return await axios(originalRequest);
 };
 
-const forceLogout = () => {
+const forceLogout = (message: string) => {
   pushToast({
     type: "error",
-    message: "로그인 정보가 만료되었습니다.\n다시 로그인 해주세요.",
+    message,
   });
   clearStorage();
 };
