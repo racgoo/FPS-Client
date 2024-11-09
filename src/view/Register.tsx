@@ -182,7 +182,6 @@ function useStyle() {
       width: "100%",
       height: "100vh",
       display: "flex",
-      backgroundColor: "red",
       justifyContent: "center",
       flexDirection: "column",
       alignItems: "center",
