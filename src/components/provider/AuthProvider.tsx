@@ -3,10 +3,10 @@ import { useLayoutEffect } from "react";
 import LoadingBox from "../loading/LoadingBox";
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { initailLogin, initialLoading } = useAuth();
+  const { initialLogin, initialLoading } = useAuth();
 
   useLayoutEffect(() => {
-    initailLogin();
+    initialLogin();
   }, []);
 
   return (

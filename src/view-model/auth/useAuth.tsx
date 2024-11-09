@@ -29,14 +29,18 @@ const useAuth = () => {
     const { status } = await userManagementApi.reissue.get();
     if (status !== 200) {
       navigate(RoutePath.LOGIN, { replace: true });
+      return false;
     }
+    return true;
   };
 
-  const initailLogin = async () => {
+  const initialLogin = async () => {
     if (!publicRoutes.includes(getPathname())) {
-      await reissue();
+      const success = await reissue();
+      if (success) {
+        navigate(RoutePath.HOME, { replace: true });
+      }
     }
-    console.log("hi");
     setInitialLoading(false);
   };
 
@@ -45,7 +49,7 @@ const useAuth = () => {
     reissue,
     loading: loginLoading,
     initialLoading,
-    initailLogin,
+    initialLogin,
   };
 };
 
