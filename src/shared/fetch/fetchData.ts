@@ -38,11 +38,12 @@ declare module "axios" {
   }
 }
 
-//REISSUE INTERCEPTOR ( GET NEW ACCESS,REFRESH TOKEN USING REFRESH TOKEN )
+//INTERCEPTOR
 axios.interceptors.response.use(async (response) => {
   const { status, message } = response.data;
-  //ERROR HANDLING
   switch (status) {
+    case 200:
+      return response;
     case 401:
       await handleUnauthorized(response);
       break;
@@ -57,6 +58,5 @@ axios.interceptors.response.use(async (response) => {
       }
     }
   }
-
   return response;
 });
