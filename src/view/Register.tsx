@@ -7,7 +7,7 @@ import {
 import { css } from "@emotion/react";
 import { Button, Form, Input, Typography } from "antd";
 import GradientButton from "@src/components/button/GradientButton";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useRegister from "@src/view-model/auth/useRegister";
 import { useTypedNavigate } from "@src/route/useTypedNavigate";
 import { RoutePath } from "@src/route/route.type";
@@ -16,7 +16,7 @@ import { pushToast } from "@src/shared/toast/toast";
 const Register = () => {
   const styles = useStyle();
   const navigate = useTypedNavigate();
-  const [emailValidButtonVisible, setEmailValidButtonVisible] = useState(false);
+
   const {
     getEmailDuplication,
     loading,
@@ -29,10 +29,18 @@ const Register = () => {
   } = useRegister();
 
   const [form] = Form.useForm();
+  const emailValue = Form.useWatch("email", form);
   const verificationFinish = !!verificationToken;
+
   const emailInputDisabled =
     emailAuthExpireTimeMils > 0 || emailAuthLoading || verificationFinish;
+
   const otpInputVisible = emailAuthExpireTimeMils > 0 && !verificationFinish;
+
+  const emailValidButtonVisible =
+    !form.isFieldValidating("email") &&
+    form.getFieldError(["email"]).length === 0 &&
+    !!emailValue;
 
   const handleRegister = (values: {
     email: string;
@@ -47,15 +55,6 @@ const Register = () => {
       });
     }
     register({ ...values, verificationToken });
-  };
-
-  const handleEmailValidButtonVisible = async () => {
-    try {
-      await form.validateFields(["email"]);
-      setEmailValidButtonVisible(true);
-    } catch {
-      setEmailValidButtonVisible(false);
-    }
   };
 
   const validateEmailDuplication = useCallback(
@@ -130,11 +129,14 @@ const Register = () => {
             <Input
               size="large"
               placeholder="이메일"
+              onChange={() => {
+                console.log("hihi");
+              }}
               prefix={<MailOutlined />}
-              onChange={handleEmailValidButtonVisible}
               disabled={emailInputDisabled}
             />
           </Form.Item>
+
           {emailValidButtonVisible && !verificationFinish && (
             <Button
               css={styles.animationBox}
@@ -146,11 +148,7 @@ const Register = () => {
           )}
 
           {otpInputVisible && (
-            <Form.Item
-              name="verificationCode"
-              css={styles.animationBox}
-              // style={{ width: "100%", marginBottom: 0 }}
-            >
+            <Form.Item name="verificationCode" css={styles.animationBox}>
               <Input
                 size="large"
                 placeholder="인증 코드"
