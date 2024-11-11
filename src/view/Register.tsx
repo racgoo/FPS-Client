@@ -12,6 +12,7 @@ import useRegister from "@src/view-model/auth/useRegister";
 import { useTypedNavigate } from "@src/route/useTypedNavigate";
 import { RoutePath } from "@src/route/route.type";
 import { pushToast } from "@src/shared/toast/toast";
+import Time from "@src/shared/constants/time";
 
 const Register = () => {
   const styles = useStyle();
@@ -163,7 +164,12 @@ const Register = () => {
                   <div css={styles.codeSuffixBox}>
                     <div css={styles.codeVerifyBox}>
                       <Typography.Text>
-                        {emailAuthExpireTimeMils / 1000}초
+                        {Math.floor(emailAuthExpireTimeMils / Time.MINUTE)}:
+                        {Math.floor(
+                          (emailAuthExpireTimeMils % Time.MINUTE) / Time.SECOND
+                        )
+                          .toString()
+                          .padStart(2, "0")}
                       </Typography.Text>
                     </div>
                     <Button
