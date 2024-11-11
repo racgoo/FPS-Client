@@ -3,7 +3,7 @@ import { FetchMethod } from "@src/shared/fetch/constants";
 
 type EmailVerificationPostApiPayload = {
   email: string;
-  otp: string;
+  code: string;
 };
 
 type EmailVerificationPostApiResult = {

@@ -41,10 +41,14 @@ const useRegister = () => {
     }
   }
 
-  async function sendEmailVerification(email: string, otp: string) {
-    const { status, data } = await userManagementApi.emailVerification.post({
+  async function sendEmailVerification(email: string, code: string) {
+    const {
+      status,
+      data,
+      code: errorCode,
+    } = await userManagementApi.emailVerification.post({
       email,
-      otp,
+      code,
     });
     if (status === 200) {
       pushToast({
@@ -52,6 +56,11 @@ const useRegister = () => {
         message: "인증이 완료되었습니다.",
       });
       setVerificationToken(data.verificationToken);
+    }
+    console.log(status, code);
+    if (status === 400 && errorCode === "S01007") {
+      console.log("clearTimer");
+      clearTimer();
     }
   }
 
@@ -89,6 +98,14 @@ const useRegister = () => {
         return Math.max(prev - 1000, 0);
       });
     }, 1000);
+  }
+
+  function clearTimer() {
+    if (emailAuthExpireTimer.current) {
+      clearInterval(emailAuthExpireTimer.current);
+      emailAuthExpireTimer.current = undefined;
+      setEmailAuthExpireTimeMils(0);
+    }
   }
 
   return {

@@ -7,7 +7,7 @@ import {
 import { css } from "@emotion/react";
 import { Button, Form, Input, Typography } from "antd";
 import GradientButton from "@src/components/button/GradientButton";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import useRegister from "@src/view-model/auth/useRegister";
 import { useTypedNavigate } from "@src/route/useTypedNavigate";
 import { RoutePath } from "@src/route/route.type";
@@ -84,7 +84,7 @@ const Register = () => {
     await sendEmailAuthentication(form.getFieldValue("email"));
   };
 
-  const handleEmailVerificationButtonC = async () => {
+  const handleEmailVerificationButton = async () => {
     await sendEmailVerification(
       form.getFieldValue("email"),
       form.getFieldValue("verificationCode")
@@ -94,6 +94,12 @@ const Register = () => {
   const goToLogin = () => {
     navigate(RoutePath.LOGIN, { replace: true });
   };
+
+  useEffect(() => {
+    if (emailAuthExpireTimeMils === 0) {
+      form.resetFields(["verificationCode"]);
+    }
+  }, [emailAuthExpireTimeMils]);
 
   return (
     <div css={styles.container}>
@@ -163,7 +169,7 @@ const Register = () => {
                     <Button
                       css={styles.codeVerifyBox}
                       size="small"
-                      onClick={handleEmailVerificationButtonC}
+                      onClick={handleEmailVerificationButton}
                     >
                       인증하기
                     </Button>
