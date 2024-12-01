@@ -1,7 +1,7 @@
 import "./App.css";
 import { css } from "@emotion/react";
 import BackgroundImage from "/login-asset/login-background.webp";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import NotFound from "./view/NotFound";
 import Login from "./view/Login";
 import { ConfigProvider } from "antd";
@@ -12,19 +12,17 @@ import CookieProvider from "./components/provider/CookieProvider";
 import { RoutePath } from "./route/route.type";
 import Home from "./view/Home";
 import AuthProvider from "./components/provider/AuthProvider";
+import { AnimatePresence } from "framer-motion";
+import AnimatedLayout from "@src/components/layout/AnimatedLayout";
 
 function App() {
-  const styles = useStyle();
-
   return (
     <CookieProvider>
       <ConfigProvider theme={antdTheme}>
         <AlertProvider>
           <BrowserRouter>
             <AuthProvider>
-              <div css={styles.container}>
-                <AppContent />
-              </div>
+              <AppContent />
             </AuthProvider>
           </BrowserRouter>
         </AlertProvider>
@@ -34,13 +32,38 @@ function App() {
 }
 
 function AppContent() {
+  const location = useLocation();
+
   return (
-    <Routes>
-      <Route path={RoutePath.LOGIN} element={<Login />}></Route>
-      <Route path={RoutePath.REGISTER} element={<Register />}></Route>
-      <Route path={RoutePath.HOME} element={<Home />}></Route>
-      <Route path="*" element={<NotFound />}></Route>
-    </Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route
+          path={RoutePath.LOGIN}
+          element={
+            <AnimatedLayout>
+              <Login />
+            </AnimatedLayout>
+          }
+        />
+        <Route
+          path={RoutePath.REGISTER}
+          element={
+            <AnimatedLayout>
+              <Register />
+            </AnimatedLayout>
+          }
+        />
+        <Route
+          path={RoutePath.HOME}
+          element={
+            <AnimatedLayout>
+              <Home />
+            </AnimatedLayout>
+          }
+        />
+        <Route path="*" element={<NotFound />}></Route>
+      </Routes>
+    </AnimatePresence>
   );
 }
 

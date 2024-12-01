@@ -106,6 +106,9 @@ function Login() {
 function useStyle() {
   return {
     container: css({
+      position: "absolute",
+      top: 0,
+      left: 0,
       display: "flex",
       justifyContent: "center",
       backgroundImage: `url(${BackgroundImage})`,
@@ -115,6 +118,7 @@ function useStyle() {
       width: "100%",
       height: "100vh",
       gap: "10px",
+      zIndex: -1,
     }),
     inputBox: css({
       display: "flex",

@@ -40,6 +40,8 @@ export default defineConfig(async () => ({
       "@query": "/src/model/query.not.use",
       "@view-model": "/src/view-model",
       "@view": "/src/view",
+      "@style": "/src/style",
+      "@public": "/public",
     },
   },
 }));

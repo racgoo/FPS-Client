@@ -13,6 +13,7 @@ import { useTypedNavigate } from "@src/route/useTypedNavigate";
 import { RoutePath } from "@src/route/route.type";
 import { pushToast } from "@src/shared/toast/toast";
 import Time from "@src/shared/constants/time";
+import BackgroundImage from "@public/login-asset/login-background.webp";
 
 const Register = () => {
   const styles = useStyle();
@@ -279,6 +280,9 @@ function useStyle() {
       justifyContent: "center",
       flexDirection: "column",
       alignItems: "center",
+      backgroundImage: `url(${BackgroundImage})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
     }),
     inputBox: css({
       width: "300px",

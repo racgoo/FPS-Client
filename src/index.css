@@ -30,11 +30,15 @@ a:hover {
 
 body {
   margin: 0;
+  padding: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
+  min-width: 1200px;
   min-height: 100vh;
   box-sizing: border-box;
+  overflow: scroll;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
 }
 
 h1 {
@@ -72,4 +76,45 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+#root {
+  height: 100%;
+  overflow: auto;
+  overscroll-behavior: none;
+}
+
+/* 기본 커서 스타일 */
+* {
+  cursor: url("/cursors/pointer-cursor.png") 16 16, auto;
+}
+
+/* 클릭 가능한 요소들의 커서 스타일 */
+button,
+[role="button"],
+a,
+input[type="submit"],
+input[type="button"],
+.clickable,
+.ant-btn,
+.ant-tabs-tab,
+.ant-modal-close {
+  cursor: url("/cursors/pointer-cursor.png") 16 16, pointer !important;
+}
+
+/* 텍스트 입력 영역의 커서 스타일 */
+input[type="text"],
+input[type="password"],
+textarea {
+  cursor: url("/cursors/text-cursor.png") 0 0, text !important;
+}
+
+/* 스크롤바 숨기기 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox용 스크롤바 숨기기 */
+* {
+  scrollbar-width: none;
 }

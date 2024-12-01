@@ -33,7 +33,9 @@
       "@views/*": ["./src/views/*"],
       "@query/*": ["./src/model/query.not.use/*"],
       "@view-model/*": ["./src/view-model/*"],
-      "@view/*": ["./src/view/*"]
+      "@view/*": ["./src/view/*"],
+      "@style/*": ["./src/style/*"],
+      "@public/*": ["./public/*"]
     }
   },
   "include": ["src"]
